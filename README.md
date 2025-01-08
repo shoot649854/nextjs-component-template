@@ -16,6 +16,10 @@ pnpm run dev
 pnpm run storybook
 # test
 pnpm run test
+# prettier
+pnpm run check:prettier
 # knip
 pnpm run check:knip
+# type
+pnpm run check:type
 ```
