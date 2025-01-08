@@ -1,0 +1,26 @@
+{
+  "entry": ["src/**/*.ts", "src/**/*.tsx"],
+  "ignore": [
+    ".eslintrc.json",
+    "babel-jest.config.js",
+    "eslint.config.mjs",
+    "jest.config.js",
+    "node_modules",
+    "postcss.config.js"
+  ],
+  "ignoreBinaries": ["jest", "only-allow", "poetry"],
+  "ignoreDependencies": [
+    "@storybook/blocks",
+    "@storybook/builder-webpack5",
+    "@types/jest",
+    "eslint-config-next",
+    "hidden-package",
+    "mini-css-extract-plugin",
+    "postcss-scss",
+    "Unlisted binaries",
+    "vfile",
+    "vfile-message",
+    "webpack-cli"
+  ],
+  "project": "tsconfig.json"
+}

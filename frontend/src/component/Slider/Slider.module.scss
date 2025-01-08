@@ -1,0 +1,109 @@
+/* Select.module.scss */
+
+/* ----- Select Trigger (the visible button-like control) ----- */
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--bg-color);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    border-color: var(--primary-color);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.selectTriggerIcon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.5;
+}
+
+/* ----- Select Content (the dropdown container) ----- */
+.selectContent {
+  position: relative;
+  z-index: 50;
+  min-width: 8rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--bg-light);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.selectContentViewport {
+  padding: 0.25rem;
+}
+
+/* ----- Select Label (the group label) ----- */
+.selectLabel {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-light); /* e.g., a darker neutral */
+}
+
+/* ----- Select Item (each dropdown option) ----- */
+.selectItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  cursor: default;
+  user-select: none;
+  padding: 0.5rem 2rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+  color: var(--text-color);
+
+  /* On focus or hover, highlight the background */
+  &:focus {
+    outline: none;
+    background-color: var(--bg-hover); /* example highlight color */
+  }
+
+  &[data-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+/* The check icon container on the left */
+.selectItemIndicator {
+  position: absolute;
+  left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.selectItemIndicatorIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ----- Select Separator (horizontal line between groups or items) ----- */
+.selectSeparator {
+  margin: 0.5rem 0;
+  height: 1px;
+  background-color: var(--bg-light);
+}

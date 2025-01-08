@@ -1,0 +1,114 @@
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  width: 100%;
+  background-color: var(--bg-color);
+  border: 1px solid var(--bg-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--border-color);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  }
+}
+
+.selectTriggerIcon {
+  margin-left: 8px;
+  color: var(--border-hover);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--text-muted);
+  }
+}
+
+.selectContent {
+  position: absolute;
+  z-index: 50;
+  background-color: var(--bg-color);
+  border: 1px solid var(--bg-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 200px;
+
+  &.selectContent-popper {
+    top: 100%;
+    margin-top: 8px;
+  }
+}
+
+.selectContent-viewport {
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 9999px;
+
+    &:hover {
+      background-color: var(--border-hover);
+    }
+  }
+}
+
+.selectLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.selectItem {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-color);
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-light);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--bg-hover);
+  }
+
+  &:focus {
+    outline: none;
+    background-color: var(--bg-light);
+  }
+}
+
+.selectItemIndicator {
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.selectItemIndicatorIcon {
+  color: var(--primary-color);
+}
+
+.selectSeparator {
+  height: 1px;
+  background-color: var(--bg-light);
+  margin: 8px 0;
+}

@@ -1,0 +1,42 @@
+.accordion {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.accordionItem {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.accordionTrigger {
+  width: 100%;
+  background-color: var(--bg-hover);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 1rem;
+  font-size: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &:hover {
+    background-color: var(--border-hover);
+  }
+}
+
+.indicator {
+  margin-left: auto;
+  font-size: 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.accordionContent {
+  padding: 1rem;
+  background-color: var(--bg-color);
+}
