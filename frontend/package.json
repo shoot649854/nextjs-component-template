@@ -62,7 +62,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-plugin-storybook": "^0.11.1",
+    "eslint-plugin-storybook": "^0.11.2",
     "prettier": "^3.4.2",
     "storybook": "^8.4.7",
     "typescript": "^5",
