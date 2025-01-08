@@ -10,6 +10,8 @@ Next.js v19 component with jest, sass, and storybook template
 > pnpm run dev:turbopack supports turbopack, but jest library does not support jest testing library at this moment (Jan 2025)
 
 ```bash
+# build
+pnpm run build
 # start local dev server
 pnpm run dev
 # start storybook
