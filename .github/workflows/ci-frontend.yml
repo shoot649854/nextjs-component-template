@@ -1,0 +1,227 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/src/**'
+
+jobs:
+  SetGlobalConstants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      # TARGET_DIRECTORIES: '["frontend"]'
+      TARGET_DIRECTORY: 'frontend'
+      NODE_16_VERSION: 16.16.0
+      NODE_18_VERSION: 18.18.0
+      NODE_20_VERSION: 20.12.2
+    steps:
+      - run: echo 'Setting constants.'
+
+  CreateCache:
+    needs: SetGlobalConstants
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        node-version: [
+          '${{ needs.SetGlobalConstants.outputs.NODE_16_VERSION }}',
+          '${{ needs.SetGlobalConstants.outputs.NODE_18_VERSION }}',
+          '${{ needs.SetGlobalConstants.outputs.NODE_20_VERSION }}'
+        ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Create Cache for Node.js and pnpm
+        uses: ./.github/actions/create_node_cache
+        with:
+          node-version: ${{ matrix.node-version }}
+          target-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+
+  UpdateReadmeBadgesToCheckingStatus:
+    needs: SetGlobalConstants
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Update each lint badge status to running or failing
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: '${{ needs.SetGlobalConstants.outputs.PASSING_LINTS_BADGE_NAME }}'
+          label: '${{ needs.SetGlobalConstants.outputs.PASSING_LINTS_BADGE_LABEL }}'
+          status: '${{ needs.SetGlobalConstants.outputs.RUNNING_OR_FAILING_STATUS }}'
+          color: ${{ needs.SetGlobalConstants.outputs.CHECKING_BADGE_COLOR }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update the passing unit tests Python versions status
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: '${{ needs.SetGlobalConstants.outputs.PASSING_UNIT_TEST_PYTHON_VERSIONS_BADGE_NAME }}'
+          label: '${{ needs.SetGlobalConstants.outputs.PASSING_UNIT_TEST_PYTHON_VERSIONS_BADGE_LABEL }}'
+          status: '${{ needs.SetGlobalConstants.outputs.RUNNING_OR_FAILING_STATUS }}'
+          color: ${{ needs.SetGlobalConstants.outputs.CHECKING_BADGE_COLOR }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
+  RunTypeCheck:
+    needs: [CreateCache, SetGlobalConstants]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup_node_dependencies
+        with:
+          node-version: '${{ needs.SetGlobalConstants.outputs.NODE_20_VERSION }}' 
+          target-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+      - name: Check Type
+        run: pnpm run check:type
+        working-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+  RunLint:
+    needs: [CreateCache, SetGlobalConstants]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup_node_dependencies
+        with:
+          node-version: '${{ needs.SetGlobalConstants.outputs.NODE_20_VERSION }}' 
+          target-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+      - name: Check Type
+        run: pnpm run lint
+        working-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+  RunFormat:
+    needs: [CreateCache, SetGlobalConstants]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup_node_dependencies
+        with:
+          node-version: '${{ needs.SetGlobalConstants.outputs.NODE_20_VERSION }}' 
+          target-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+      - name: Check Type
+        run: pnpm run check:format
+        working-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+  RunKnip:
+    needs: [CreateCache, SetGlobalConstants]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup_node_dependencies
+        with:
+          node-version: '${{ needs.SetGlobalConstants.outputs.NODE_20_VERSION }}' 
+          target-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+      - name: Check Type
+        run: pnpm run check:knip
+        working-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+
+  RunTest:
+    needs: [
+      CreateCache, 
+      SetGlobalConstants, 
+      RunTypeCheck,
+      RunLint,
+      RunFormat,
+      RunKnip
+      ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup_node_dependencies
+        with:
+          node-version: '${{ needs.SetGlobalConstants.outputs.NODE_20_VERSION }}' 
+          target-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+      - name: Check Type
+        run: pnpm run test
+        working-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+  RunBuid:
+    needs: [
+      CreateCache, 
+      SetGlobalConstants, 
+      RunTypeCheck,
+      RunLint,
+      RunFormat,
+      RunKnip
+      ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup_node_dependencies
+        with:
+          node-version: '${{ needs.SetGlobalConstants.outputs.NODE_20_VERSION }}' 
+          target-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+      - name: Check Type
+        run: pnpm run build
+        working-directory: ${{ needs.SetGlobalConstants.outputs.TARGET_DIRECTORY }}
+
+  UpdateReadmeBadgesToPassingStatus:
+    needs: [
+      SetGlobalConstants, 
+      CreateCache, 
+      UpdateReadmeBadgesToCheckingStatus,
+      RunTypeCheck,
+      RunLint,
+      RunFormat,
+      RunKnip,
+      RunTest,
+      RunBuid
+    ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Update each lint badge status
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: '${{ needs.SetGlobalConstants.outputs.PASSING_LINTS_BADGE_NAME }}'
+          label: '${{ needs.SetGlobalConstants.outputs.PASSING_LINTS_BADGE_LABEL }}'
+          status: 'flake8 | mypy | Pyright | numdoclint'
+          color: ${{ needs.SetGlobalConstants.outputs.PASSING_BADGE_COLOR }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Echo the passing unit tests number value
+        run: echo ${{ needs.RunTestsAndSaveCoverageAndPassingNum.outputs.COVERAGE }}
+      - name: Update tests line coverage
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: unit_tests_coverage
+          label: 'unit tests coverage'
+          status: ${{ needs.RunTestsAndSaveCoverageAndPassingNum.outputs.COVERAGE }}
+          color: ${{ needs.SetGlobalConstants.outputs.PASSING_BADGE_COLOR }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Echo the passing unit tests number value
+        run: echo ${{ needs.RunTestsAndSaveCoverageAndPassingNum.outputs.PASSING_TESTS_NUM }}
+      - name: Update the passing unit tests number
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: passing_unit_tests_num
+          label: 'passing unit tests number'
+          status: ${{ needs.RunTestsAndSaveCoverageAndPassingNum.outputs.PASSING_TESTS_NUM }}
+          color: ${{ needs.SetGlobalConstants.outputs.PASSING_BADGE_COLOR }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update the passsing doctests number
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: passing_doctests_num
+          label: 'passing doctests number'
+          status: ${{ needs.RunDocTest.outputs.PASSING_TESTS_NUM }}
+          color: ${{ needs.SetGlobalConstants.outputs.PASSING_BADGE_COLOR }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update the passing unit tests Python versions status
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: '${{ needs.SetGlobalConstants.outputs.PASSING_UNIT_TEST_PYTHON_VERSIONS_BADGE_NAME }}'
+          label: '${{ needs.SetGlobalConstants.outputs.PASSING_UNIT_TEST_PYTHON_VERSIONS_BADGE_LABEL }}'
+          status: '${{ needs.SetGlobalConstants.outputs.PYTHON_38_VERSION }} | ${{ needs.SetGlobalConstants.outputs.PYTHON_39_VERSION }} | ${{ needs.SetGlobalConstants.outputs.PYTHON_310_VERSION }} | ${{ needs.SetGlobalConstants.outputs.PYTHON_311_VERSION }} | ${{ needs.SetGlobalConstants.outputs.PYTHON_312_VERSION }}'
+          color: ${{ needs.SetGlobalConstants.outputs.PASSING_BADGE_COLOR }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

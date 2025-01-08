@@ -1,0 +1,46 @@
+name: Create Cache
+description: Cache Node.js version and pnpm store for the frontend.
+inputs:
+  node-version:
+    description: Node.js version to use.
+    required: true
+  target-directory:
+    description: Target directory for caching dependencies.
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Cache Node.js version
+      uses: actions/cache@v4
+      with:
+        path: ~/.nvm/versions/node/
+        key: node-${{ runner.os }}-${{ inputs.node-version }}-${{ hashFiles('frontend/.node-version') }}
+        restore-keys: |
+          node-${{ runner.os }}-${{ inputs.node-version }}-
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8.6.6
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Cache pnpm store
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: pnpm-store-${{ runner.os }}-${{ inputs.node-version }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+        restore-keys: |
+          pnpm-store-${{ runner.os }}-${{ inputs.node-version }}-

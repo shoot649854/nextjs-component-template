@@ -1,0 +1,24 @@
+name: Assign Label
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  assign-label:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Label based on branch name
+        if: ${{ github.event.action == 'opened' }}
+        uses: actions/labeler@v5
+        with:
+          configuration-path: .github/labels/labeling-branch.yaml
+      - name: Label based on file changes
+        uses: actions/labeler@v5
+        with:
+          configuration-path: .github/labels/labeling-files.yaml
